@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo - Mundial de Clubes 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://img.freepik.com/free-vector/soccer-field-texture-top-view_1284-13845.jpg'); /* Textura de campo de futebol */
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 80px;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(90deg, #1a3c34, #2e8b57);
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        }
+        header h1 {
+            font-size: 2em;
+            margin: 0;
+            color: #ffd700; /* Amarelo ouro, como troféu */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        header h1 i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .quiz-container {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            width: 90%;
+            max-width: 700px;
+            margin: 20px;
+            border: 2px solid #ffd700;
+            position: relative;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .quiz-container h2 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        input[type=text], input[type=number], select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px;
+            border-radius: 8px;
+            border: 2px solid #2e8b57;
+            background: #fff;
+            color: #333;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input[type=text]:focus, input[type=number]:focus, select:focus {
+            border-color: #ffd700;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #2e8b57, #3cb371);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background 0.3s;
+        }
+        button i {
+            margin-right: 8px;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #3cb371, #2e8b57);
+            transform: scale(1.05);
+        }
+        .resultado {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.3em;
+            color: #ffd700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .pergunta {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            border-left: 5px solid #ffd700;
+        }
+        .pergunta p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .pergunta label {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            cursor: pointer;
+            font-size: 1em;
+            color: #e0e0e0;
+            transition: color 0.3s;
+        }
+        .pergunta label:hover {
+            color: #ffd700;
+        }
+        .pergunta input[type=radio] {
+            margin-right: 10px;
+            accent-color: #2e8b57;
+            transform: scale(1.2);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1a3c34, #2e8b57);
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            border: 3px solid #ffd700;
+            animation: popUp 0.4s ease-out;
+        }
+        @keyframes popUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-content h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .modal-content button {
+            width: auto;
+            padding: 10px 30px;
+        }
+        .error {
+            color: #ff4500;
+            font-size: 0.95em;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fa-solid fa-futbol"></i> Quiz Interativo - Mundial de Clubes 2025</h1>
+    </header>
+    <div class="quiz-container">
+        <h2>Teste seus conhecimentos sobre o Mundial de Clubes 2025!</h2>
+        <div id="quiz"></div>
+        <button onclick="verificarRespostas()"><i class="fa-solid fa-check"></i> Enviar Respostas</button>
+        <button onclick="verRanking()"><i class="fa-solid fa-trophy"></i> Ver Ranking</button>
+        <div id="resultado" class="resultado"></div>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fa-solid fa-futbol"></i> Bem-vindo ao Quiz!</h3>
+            <input type="text" id="nomeUsuario" placeholder="Digite seu nome" required>
+            <input type="number" id="idadeUsuario" placeholder="Digite sua idade" min="1" required>
+            <div id="errorMessage" class="error"></div>
+            <button onclick="salvarUsuario()"><i class="fa-solid fa-play"></i> Iniciar Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        let ranking = JSON.parse(localStorage.getItem('quizRanking')) || [];
+        let nomeUsuario = '';
+        let idadeUsuario = '';
+
+        window.onload = function() {
+            document.getElementById('userModal').style.display = 'flex';
+        };
+
+        const perguntas = [
+            { pergunta: "Onde será realizado o Mundial de Clubes 2025?", opcoes: ["Nos Estados Unidos", "No Japão", "Em Marrocos"], resposta: "Nos Estados Unidos" },
+            { pergunta: "Qual time venceu o Mundial de Clubes 2023?", opcoes: ["Manchester City", "Flamengo", "Real Madrid"], resposta: "Manchester City" },
+            { pergunta: "Quem foi o artilheiro do Mundial de Clubes 2023?", opcoes: ["Gabigol", "Benzema", "Erling Haaland"], resposta: "Erling Haaland" },
+            { pergunta: "Qual time brasileiro participou mais vezes do Mundial de Clubes?", opcoes: ["Corinthians", "São Paulo", "Palmeiras"], resposta: "Corinthians" },
+            { pergunta: "Qual time venceu a edição de 2012 do Mundial de Clubes?", opcoes: ["Chelsea", "Corinthians", "Bayern de Munique"], resposta: "Corinthians" },
+            { pergunta: "Quem é o maior vencedor do Mundial de Clubes?", opcoes: ["Real Madrid", "Barcelona", "Bayern de Munique"], resposta: "Real Madrid" }
+        ];
+
+        const quizContainer = document.getElementById('quiz');
+
+        perguntas.forEach((q, index) => {
+            let opcoesHtml = q.opcoes.map(opcao =>
+                `<label><input type="radio" name="pergunta${index}" value="${opcao}"> ${opcao}</label>`
+            ).join('');
+
+            quizContainer.innerHTML += `
+                <div class="pergunta">
+                    <p><i class="fa-solid fa-question-circle"></i> ${index + 1}. ${q.pergunta}</p>
+                    ${opcoesHtml}
+                </div>
+            `;
+        });
+
+        function salvarUsuario() {
+            nomeUsuario = document.getElementById('nomeUsuario').value.trim();
+            idadeUsuario = document.getElementById('idadeUsuario').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (!nomeUsuario || !idadeUsuario || isNaN(idadeUsuario) || idadeUsuario <= 0) {
+                errorMessage.innerHTML = 'Por favor, preencha nome e idade válidos!';
+                return;
+            }
+
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        function verificarRespostas() {
+            if (!nomeUsuario || !idadeUsuario) {
+                document.getElementById('userModal').style.display = 'flex';
+                document.getElementById('errorMessage').innerHTML = 'Por favor, preencha seus dados antes de enviar!';
+                return;
+            }
+
+            let corretas = 0;
+
+            perguntas.forEach((q, index) => {
+                const respostaUsuario = document.querySelector(`input[name="pergunta${index}"]:checked`);
+                if (respostaUsuario && respostaUsuario.value === q.resposta) {
+                    corretas++;
+                }
+            });
+
+            ranking.push({ nome: nomeUsuario, idade: idadeUsuario, corretas });
+            ranking.sort((a, b) => b.corretas - a.corretas);
+            localStorage.setItem('quizRanking', JSON.stringify(ranking));
+
+            document.getElementById('resultado').innerHTML = `${nomeUsuario}, você acertou ${corretas} de ${perguntas.length}!`;
+        }
+
+        function verRanking() {
+            if (ranking.length === 0) {
+                document.getElementById('resultado').innerHTML = 'Ainda não há jogadores no ranking!';
+                return;
+            }
+
+            let rankingHtml = '<h3>🏆 Ranking dos Jogadores</h3><ol>';
+            ranking.forEach(jogador => {
+                rankingHtml += `<li>${jogador.nome} (${jogador.idade} anos) - ${jogador.corretas} acertos</li>`;
+            });
+            rankingHtml += '</ol>';
+            document.getElementById('resultado').innerHTML = rankingHtml;
+        }
+    </script>
+</body>
+</html>
